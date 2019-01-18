@@ -29,7 +29,7 @@
 
     var body = document.querySelector('body');
     var floater = createFloater();
-    
+
     body.appendChild(floater);
   }
 
@@ -108,8 +108,8 @@
   function createLinks() {
 
     var url = window.location;
-    var searchLinkType1 = '/search?f=tweets&vertical=default&q=' + url.href;
-    var searchLinkType2 = '/search?f=tweets&vertical=default&q=' + url.hostname + url.pathname;
+    var searchLinkType1 = 'https://twitter.com/search?f=tweets&vertical=default&q=' + url.href;
+    var searchLinkType2 = 'https://twitter.com/search?f=tweets&vertical=default&q=' + url.hostname + url.pathname;
     var link = document.createElement('a');
 
     link.style.color = '#003fa7';
@@ -140,7 +140,7 @@
 
   function isLegacyTwitter() {
 
-    return !document.querySelector('article');
+    return !!document.querySelector('.permalink-tweet');
   }
 
 })();
