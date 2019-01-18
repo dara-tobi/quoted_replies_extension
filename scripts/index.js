@@ -57,10 +57,23 @@
     floater.style.backgroundSize = 'contain';
 
     floater.style.position = 'fixed';
-    floater.style.top = '40px';
-    floater.style.left = '20px';
+    floater.style.zIndex = '500000000';
 
     var linksContainer = createLinksContainer();
+
+    if (isLegacyTwitter()) {
+      // User is on the regular web Twitter
+      floater.style.top = '89px';
+      floater.style.left = '47%';
+      linksContainer.style.left = '49%';
+
+    } else {
+      // User is on the new mobile-like version
+      floater.style.top = '88px';
+      floater.style.left = '39%';
+      linksContainer.style.left = '41%';
+    }
+
     var links = createLinks();
 
     linksContainer.appendChild(links);
@@ -74,6 +87,8 @@
     var linksContainer = document.createElement('div');
 
     linksContainer.className = 'quotedRepliesLinkDiv';
+    linksContainer.style.color = '#003fa7';
+    linksContainer.style.lineHeight = '10px';
     linksContainer.textContent = 'Links:';
     linksContainer.style.width = '40px';
     linksContainer.style.height = '22px';
@@ -82,7 +97,6 @@
     linksContainer.style.textAlign = 'center';
     linksContainer.style.background = 'white';
     linksContainer.style.position = 'fixed';
-    linksContainer.style.left = '49px';
     linksContainer.style.fontFamily = 'sans-serif';
     linksContainer.style.fontSize = 'xx-small';
 
@@ -99,6 +113,7 @@
     link.style.color = '#003fa7';
     link.style.fontFamily = 'sans-serif';
     link.style.display = 'inline-block';
+    link.style.textDecoration = 'underline';
 
     var linksDiv = document.createElement('div');
     linksDiv.style.textAlign = 'left';
@@ -120,4 +135,10 @@
 
     return linksDiv;
   }
+
+  function isLegacyTwitter() {
+
+    return !document.querySelector('article');
+  }
+
 })();
