@@ -112,6 +112,7 @@
     var searchLinkType2 = 'https://twitter.com/search?f=tweets&vertical=default&q=' + url.hostname + url.pathname;
     var link = document.createElement('a');
 
+    link.target = '_blank';
     link.style.color = '#003fa7';
     link.style.fontFamily = 'sans-serif';
     link.style.display = 'inline-block';
