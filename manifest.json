@@ -1,0 +1,22 @@
+{
+  "background": {
+    "scripts": [ "scripts/background.js" ]
+  },
+  "content_scripts": [{
+    "js": [ "scripts/index.js" ],
+    "matches": [ "https://*.twitter.com/*" ],
+    "run_at": "document_end"
+  }],
+  "description": "View the quoted replies for a Tweet.",
+  "icons": {
+    "48": "icons/logo.png"
+  },
+  "manifest_version": 2,
+  "name": "Quoted Replies",
+  "permissions": [ "https://*.twitter.com/*" ],
+  "short_name": "Quoted Replies",
+  "version": "0.0.1.0",
+  "web_accessible_resources": [
+    "icons/quoted_replies.png"
+  ]
+}
