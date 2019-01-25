@@ -28,21 +28,23 @@
   function appendQuotedRepliesFloater() {
 
     var body = document.querySelector('body');
-    var floater = createFloater();
+    var floatingElements = createFloatingElements();
 
-    body.appendChild(floater);
+    body.appendChild(floatingElements);
   }
 
   function removeQuotedRepliesFloater() {
 
-    var floater = document.querySelector('#quoted-replies-floater');
+    var floaterContainer = document.querySelector('#floater-container');
 
-    if (floater) {
-      floater.parentNode.removeChild(floater);
+    if (floaterContainer) {
+      floaterContainer.parentNode.removeChild(floaterContainer);
+    } else {
+      appendQuotedRepliesFloater();
     }
   }
 
-  function createFloater() {
+  function createFloatingElements() {
 
     var iconUrl = chrome.extension.getURL("icons/quoted_replies.png");
     var floater = document.createElement('div');

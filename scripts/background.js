@@ -18,3 +18,13 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     });
   }
 });
+
+chrome.browserAction.onClicked.addListener((tab) => {
+  chrome.tabs.executeScript(tab.Id, {
+    file: 'scripts/index.js'
+  }, () => {
+    if (chrome.runtime.lastError) {
+      // Some error occurred while running tabs.executeScript
+    }
+  });
+});
