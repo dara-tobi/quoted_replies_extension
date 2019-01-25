@@ -5,13 +5,7 @@
   chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
 
-      if (isStatusPage()) {
-
-        appendQuotedRepliesFloater();
-      } else {
-
-        removeQuotedRepliesFloater();
-      }
+    appendQuotedRepliesFloater();
   });
 
   function isStatusPage() {
@@ -26,23 +20,24 @@
   }
 
   function appendQuotedRepliesFloater() {
+    if (isStatusPage() && !document.querySelector('#floater-container')) {
 
-    var body = document.querySelector('body');
-    var floatingElements = createFloatingElements();
+      var body = document.querySelector('body');
+      var floatingElements = createFloatingElements();
 
-    chrome.storage.local.get(['positionOptions'], function(options) {
+      chrome.storage.local.get(['positionOptions'], function(options) {
 
-      if (options.positionOptions) {
-        if (options.positionOptions.left && options.positionOptions.top) {
-          floatingElements.style.left = options.positionOptions.left;
-          floatingElements.style.top = options.positionOptions.top;
-
+        if (options.positionOptions) {
+          if (options.positionOptions.left && options.positionOptions.top) {
+            floatingElements.style.left = options.positionOptions.left;
+            floatingElements.style.top = options.positionOptions.top;
+          }
         }
-      }
 
-      body.appendChild(floatingElements);
+        body.appendChild(floatingElements);
 
-    });
+      });
+    }
   }
 
   function removeQuotedRepliesFloater() {
@@ -250,9 +245,9 @@
 
   function toggleQuotedRepliesFloater() {
     if (document.querySelector('#floater-container')) {
-      appendQuotedRepliesFloater();
-    } else {
       removeQuotedRepliesFloater();
+    } else {
+      appendQuotedRepliesFloater();
     }
   }
 
