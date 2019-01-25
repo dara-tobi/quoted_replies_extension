@@ -1,6 +1,6 @@
 (function () {
 
-  removeQuotedRepliesFloater();
+  toggleQuotedRepliesFloater();
 
   chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
@@ -30,7 +30,19 @@
     var body = document.querySelector('body');
     var floatingElements = createFloatingElements();
 
-    body.appendChild(floatingElements);
+    chrome.storage.local.get(['positionOptions'], function(options) {
+
+      if (options.positionOptions) {
+        if (options.positionOptions.left && options.positionOptions.top) {
+          floatingElements.style.left = options.positionOptions.left;
+          floatingElements.style.top = options.positionOptions.top;
+
+        }
+      }
+
+      body.appendChild(floatingElements);
+
+    });
   }
 
   function removeQuotedRepliesFloater() {
@@ -39,8 +51,6 @@
 
     if (floaterContainer) {
       floaterContainer.parentNode.removeChild(floaterContainer);
-    } else {
-      appendQuotedRepliesFloater();
     }
   }
 
@@ -182,6 +192,8 @@
 
     e.currentTarget.style.left = e.clientX - (mouseBeginX - boxBeginX) + "px";
     e.currentTarget.style.top = e.clientY - (mouseBeginY - boxBeginY) + "px";
+
+    chrome.storage.local.get(['positionOptions'], updatePosition.bind(null, e));
   }
 
   function createCloseIcon() {
@@ -220,4 +232,28 @@
 
     floaterContainer.parentNode.removeChild(floaterContainer);
   }
+
+  function updatePosition(e, options) {
+
+    if (options.positionOptions) {
+      if (options.positionOptions.shouldSaveLastPosition) {
+
+        options.positionOptions.left = e.target.style.left;
+        options.positionOptions.top = e.target.style.top;
+
+        chrome.storage.local.set({
+          ['positionOptions']: options.positionOptions
+        });
+      }
+    }
+  }
+
+  function toggleQuotedRepliesFloater() {
+    if (document.querySelector('#floater-container')) {
+      appendQuotedRepliesFloater();
+    } else {
+      removeQuotedRepliesFloater();
+    }
+  }
+
 })();
