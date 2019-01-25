@@ -28,3 +28,9 @@ chrome.browserAction.onClicked.addListener((tab) => {
     }
   });
 });
+
+chrome.runtime.onMessage.addListener(function(info){
+  if (info.message === 'floaterPositionChanged') {
+    chrome.runtime.openOptionsPage();
+  }
+});

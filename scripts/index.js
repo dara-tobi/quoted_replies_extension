@@ -26,12 +26,19 @@
       var floatingElements = createFloatingElements();
 
       chrome.storage.local.get(['positionOptions'], function(options) {
+        var positionChanged = options.positionOptions &&
+          options.positionOptions.positionChanged;
 
         if (options.positionOptions) {
           if (options.positionOptions.left && options.positionOptions.top) {
             floatingElements.style.left = options.positionOptions.left;
             floatingElements.style.top = options.positionOptions.top;
           }
+        }
+
+
+        if (!positionChanged) {
+          floatingElements.title = 'click and drag to reposition';
         }
 
         body.appendChild(floatingElements);
@@ -183,10 +190,13 @@
   }
 
   function endDrag(e) {
+
     e.currentTarget.style.display = 'block';
 
     e.currentTarget.style.left = e.clientX - (mouseBeginX - boxBeginX) + "px";
     e.currentTarget.style.top = e.clientY - (mouseBeginY - boxBeginY) + "px";
+
+    e.currentTarget.title = '';
 
     chrome.storage.local.get(['positionOptions'], updatePosition.bind(null, e));
   }
@@ -230,17 +240,35 @@
 
   function updatePosition(e, options) {
 
+    if (!options) {
+      options = {};
+    }
+
     if (options.positionOptions) {
       if (options.positionOptions.shouldSaveLastPosition) {
 
         options.positionOptions.left = e.target.style.left;
         options.positionOptions.top = e.target.style.top;
-
-        chrome.storage.local.set({
-          ['positionOptions']: options.positionOptions
-        });
       }
+
+    } else {
+      options.positionOptions = {};
     }
+
+    if (!options.positionOptions.optionsPageOpened) {
+
+      chrome.runtime.sendMessage({
+        message: 'floaterPositionChanged'
+      });
+
+      options.positionOptions.optionsPageOpened = true;
+    }
+
+    options.positionOptions.positionChanged = true;
+
+    chrome.storage.local.set({
+      ['positionOptions']: options.positionOptions
+    });
   }
 
   function toggleQuotedRepliesFloater() {
