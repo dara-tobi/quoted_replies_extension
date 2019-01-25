@@ -46,6 +46,14 @@
 
     var iconUrl = chrome.extension.getURL("icons/quoted_replies.png");
     var floater = document.createElement('div');
+    var floaterContainer = document.createElement('div');
+
+    floaterContainer.id = 'floater-container';
+
+    floaterContainer.style.position = 'fixed';
+    floaterContainer.style.width = '85px';
+    floaterContainer.style.height = '40px';
+
 
     floater.id = 'quoted-replies-floater';
 
@@ -57,31 +65,32 @@
     floater.style.backgroundImage = `url(${iconUrl})`;
     floater.style.backgroundPosition = 'center';
     floater.style.backgroundSize = 'contain';
-
-    floater.style.position = 'fixed';
-    floater.style.zIndex = '500000000';
+    floater.style.position = 'relative';
+    floaterContainer.style.zIndex = '500000000';
 
     var linksContainer = createLinksContainer();
 
     if (isLegacyTwitter()) {
       // User is on the regular web Twitter
-      floater.style.top = '89px';
-      floater.style.left = '47%';
-      linksContainer.style.left = '49%';
+
+      floaterContainer.style.top = '89px';
+      floaterContainer.style.left = '47%';
 
     } else {
       // User is on the new mobile-like version
-      floater.style.top = '88px';
-      floater.style.left = '39%';
-      linksContainer.style.left = '41%';
+
+      floaterContainer.style.top = '88px';
+      floaterContainer.style.left = '39%';
+
     }
 
     var links = createLinks();
 
     linksContainer.appendChild(links);
     floater.appendChild(linksContainer);
+    floaterContainer.appendChild(floater);
 
-    return floater;
+    return floaterContainer;
   }
 
   function createLinksContainer() {
@@ -98,7 +107,8 @@
     linksContainer.style.padding = '8px';
     linksContainer.style.textAlign = 'center';
     linksContainer.style.background = 'white';
-    linksContainer.style.position = 'fixed';
+    linksContainer.style.position = 'relative';
+    linksContainer.style.left = '25px';
     linksContainer.style.fontFamily = 'sans-serif';
     linksContainer.style.fontSize = 'xx-small';
 
