@@ -53,6 +53,11 @@
     floaterContainer.style.position = 'fixed';
     floaterContainer.style.width = '85px';
     floaterContainer.style.height = '40px';
+    floaterContainer.draggable = 'true';
+    floaterContainer.style.cursor = 'move';
+
+    floaterContainer.addEventListener('dragenter', enableDrag);
+    floaterContainer.addEventListener('dragend', endDrag);
 
 
     floater.id = 'quoted-replies-floater';
@@ -154,4 +159,24 @@
     return !!document.querySelector('.permalink-tweet');
   }
 
+  var boxBeginY, boxBeginX, mouseBeginX, mouseBeginY;
+
+  function enableDrag(e) {
+
+    var pos = e.currentTarget.getBoundingClientRect();
+
+    boxBeginX = pos.x;
+    boxBeginY = pos.y;
+    mouseBeginX = e.clientX;
+    mouseBeginY = e.clientY;
+
+    e.currentTarget.style.display = 'none';
+  }
+
+  function endDrag(e) {
+    e.currentTarget.style.display = 'block';
+
+    e.currentTarget.style.left = e.clientX - (mouseBeginX - boxBeginX) + "px";
+    e.currentTarget.style.top = e.clientY - (mouseBeginY - boxBeginY) + "px";
+  }
 })();
