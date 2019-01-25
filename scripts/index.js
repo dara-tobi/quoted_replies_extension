@@ -47,6 +47,7 @@
     var iconUrl = chrome.extension.getURL("icons/quoted_replies.png");
     var floater = document.createElement('div');
     var floaterContainer = document.createElement('div');
+    var closeIcon = createCloseIcon();
 
     floaterContainer.id = 'floater-container';
 
@@ -93,6 +94,7 @@
 
     linksContainer.appendChild(links);
     floater.appendChild(linksContainer);
+    floater.appendChild(closeIcon);
     floaterContainer.appendChild(floater);
 
     return floaterContainer;
@@ -178,5 +180,42 @@
 
     e.currentTarget.style.left = e.clientX - (mouseBeginX - boxBeginX) + "px";
     e.currentTarget.style.top = e.clientY - (mouseBeginY - boxBeginY) + "px";
+  }
+
+  function createCloseIcon() {
+
+    var closeIcon = document.createElement('span');
+
+    closeIcon.textContent = 'x';
+
+    closeIcon.style.background = '#700';
+    closeIcon.style.color = 'white';
+    closeIcon.style.height = '16px';
+    closeIcon.style.width = '16px';
+
+    closeIcon.style.display = 'inline-block';
+    closeIcon.style.fontFamily = 'sans-serif';
+    closeIcon.style.fontSize = 'xx-small';
+    closeIcon.style.lineHeight = '1.8em';
+    closeIcon.style.textAlign = 'center';
+
+    closeIcon.style.borderRadius = '10px';
+    closeIcon.style.cursor = 'pointer';
+
+    closeIcon.style.left = '70px';
+    closeIcon.style.position = 'relative';
+    closeIcon.style.top = '-49px';
+
+
+    closeIcon.addEventListener('click', dismissFloatingElements);
+
+    return closeIcon;
+  }
+
+  function dismissFloatingElements() {
+
+    var floaterContainer = document.querySelector('#floater-container');
+
+    floaterContainer.parentNode.removeChild(floaterContainer);
   }
 })();
