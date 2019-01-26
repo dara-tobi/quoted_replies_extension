@@ -4,8 +4,11 @@
 
   chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-
-    appendQuotedRepliesFloater();
+      if (!isStatusPage()) {
+        removeQuotedRepliesFloater();
+      } else {
+        appendQuotedRepliesFloater();
+      }
   });
 
   function isStatusPage() {
