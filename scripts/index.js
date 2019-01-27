@@ -74,8 +74,9 @@
     floaterContainer.draggable = 'true';
     floaterContainer.style.cursor = 'move';
 
-    floaterContainer.addEventListener('dragenter', enableDrag);
-    floaterContainer.addEventListener('dragend', endDrag);
+    floaterContainer.addEventListener('mousedown', initPositionsAndListener);
+    floaterContainer.addEventListener('mouseup', assignNewPositionsAndDetachListener);
+    floaterContainer.addEventListener('mouseleave', assignNewPositionsAndDetachListener);
 
 
     floater.id = 'quoted-replies-floater';
@@ -178,30 +179,67 @@
     return !!document.querySelector('.permalink-tweet');
   }
 
-  var boxBeginY, boxBeginX, mouseBeginX, mouseBeginY;
+  var isMousemoveEventAttached, hasElementMoved;
+  var floaterContainer;
+  var mouseBeginX, mouseBeginY, boxBeginX, boxBeginY, mouseDiffX, mouseDiffY = 0;
 
-  function enableDrag(e) {
+  function initPositionsAndListener(e) {
+    floaterContainer = e.target;
+    if (floaterContainer.id !== 'floater-container') {
+      i = 0;
+      while (floaterContainer.id !== 'floater-container' && i < 3) {
+        floaterContainer = floaterContainer.parentNode;
+        i++;
+      }
+    }
 
-    var pos = e.currentTarget.getBoundingClientRect();
+    var pos = floaterContainer.getBoundingClientRect();
 
-    boxBeginX = pos.x;
-    boxBeginY = pos.y;
-    mouseBeginX = e.clientX;
+    document.addEventListener('mousemove', setNewElementPosition);
+
     mouseBeginY = e.clientY;
+    mouseBeginX = e.clientX;
 
-    e.currentTarget.style.display = 'none';
+    boxBeginX = boxBeginX || pos.x;
+    boxBeginY = boxBeginY || pos.y;
+
+    isMousemoveEventAttached = true;
   }
 
-  function endDrag(e) {
+  function setNewBoxInitPositions() {
+    boxBeginX = boxBeginX + mouseDiffX;
+    boxBeginY = boxBeginY + mouseDiffY;
+  }
 
-    e.currentTarget.style.display = 'block';
+  function assignNewPositionsAndDetachListener() {
+    if (isMousemoveEventAttached && hasElementMoved) {
+      setNewBoxInitPositions();
 
-    e.currentTarget.style.left = e.clientX - (mouseBeginX - boxBeginX) + "px";
-    e.currentTarget.style.top = e.clientY - (mouseBeginY - boxBeginY) + "px";
+      hasElementMoved = false;
+    }
 
-    e.currentTarget.title = '';
+    document.removeEventListener('mousemove', setNewElementPosition);
+    isMousemoveEventAttached = false;
+  }
 
-    chrome.storage.local.get(['positionOptions'], updatePosition.bind(null, e));
+  function setNewElementPosition(e) {
+    if (isMousemoveEventAttached) {
+      hasElementMoved = true;
+      getNewMousePosition(e);
+
+      floaterContainer.style.left = boxBeginX + mouseDiffX + "px";
+      floaterContainer.style.top = boxBeginY + mouseDiffY + "px";
+
+      e.currentTarget.title = '';
+    }
+  }
+
+  function getNewMousePosition(e) {
+    mouseEndX = e.clientX;
+    mouseEndY = e.clientY;
+
+    mouseDiffX = mouseEndX - mouseBeginX;
+    mouseDiffY = mouseEndY - mouseBeginY;
   }
 
   function createCloseIcon() {

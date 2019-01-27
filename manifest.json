@@ -16,7 +16,10 @@
   },
   "manifest_version": 2,
   "name": "Quoted Replies",
-  "options_page": "options/options.html",
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
   "permissions": [ "https://*.twitter.com/*", "storage" ],
   "short_name": "Quoted Replies",
   "version": "0.0.2.2",
