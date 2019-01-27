@@ -184,18 +184,27 @@
   var mouseBeginX, mouseBeginY, boxBeginX, boxBeginY, mouseDiffX, mouseDiffY = 0;
 
   function initPositionsAndListener(e) {
+
     floaterContainer = e.target;
+
     if (floaterContainer.id !== 'floater-container') {
-      i = 0;
+
+      var i = 0;
+
       while (floaterContainer.id !== 'floater-container' && i < 3) {
         floaterContainer = floaterContainer.parentNode;
         i++;
       }
+
+    }
+
+    if (floaterContainer.id !== 'floater-container') {
+      return null;
     }
 
     var pos = floaterContainer.getBoundingClientRect();
 
-    document.addEventListener('mousemove', setNewElementPosition);
+    document.addEventListener('mousemove', setNewFloaterPosition);
 
     mouseBeginY = e.clientY;
     mouseBeginX = e.clientX;
@@ -209,6 +218,8 @@
   function setNewBoxInitPositions() {
     boxBeginX = boxBeginX + mouseDiffX;
     boxBeginY = boxBeginY + mouseDiffY;
+
+    chrome.storage.local.get(['positionOptions'], updateSavedPosition);
   }
 
   function assignNewPositionsAndDetachListener() {
@@ -218,11 +229,11 @@
       hasElementMoved = false;
     }
 
-    document.removeEventListener('mousemove', setNewElementPosition);
+    document.removeEventListener('mousemove', setNewFloaterPosition);
     isMousemoveEventAttached = false;
   }
 
-  function setNewElementPosition(e) {
+  function setNewFloaterPosition(e) {
     if (isMousemoveEventAttached) {
       hasElementMoved = true;
       getNewMousePosition(e);
@@ -230,7 +241,7 @@
       floaterContainer.style.left = boxBeginX + mouseDiffX + "px";
       floaterContainer.style.top = boxBeginY + mouseDiffY + "px";
 
-      e.currentTarget.title = '';
+      floaterContainer.title = '';
     }
   }
 
@@ -279,17 +290,18 @@
     floaterContainer.parentNode.removeChild(floaterContainer);
   }
 
-  function updatePosition(e, options) {
+  function updateSavedPosition(options) {
 
     if (!options) {
-      options = {};
+      var options = {};
     }
 
     if (options.positionOptions) {
       if (options.positionOptions.shouldSaveLastPosition) {
 
-        options.positionOptions.left = e.target.style.left;
-        options.positionOptions.top = e.target.style.top;
+        options.positionOptions.left = floaterContainer.style.left;
+        options.positionOptions.top = floaterContainer.style.top;
+
       }
 
     } else {
