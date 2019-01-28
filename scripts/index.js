@@ -1,14 +1,20 @@
 (function () {
 
-  toggleQuotedRepliesFloater();
-
   chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-      if (!isStatusPage()) {
+
+  function(request, sender, sendResponse) {
+    if (!isStatusPage()) {
+      removeQuotedRepliesFloater();
+    } else {
+      if (request.message === 'urlChanged' || request.message === 'pageLoaded') {
+
         removeQuotedRepliesFloater();
-      } else {
         appendQuotedRepliesFloater();
+
+      } else {
+        toggleQuotedRepliesFloater();
       }
+    }
   });
 
   function isStatusPage() {
@@ -23,7 +29,7 @@
   }
 
   function appendQuotedRepliesFloater() {
-    if (isStatusPage() && !document.querySelector('#floater-container')) {
+    if (isStatusPage()) {
 
       var body = document.querySelector('body');
       var floatingElements = createFloatingElements();
