@@ -19,7 +19,7 @@
   "options_page": "options/options.html",
   "permissions": [ "https://*.twitter.com/*", "storage" ],
   "short_name": "Quoted Replies",
-  "version": "0.0.2.3",
+  "version": "0.0.3.0",
   "web_accessible_resources": [
     "icons/quoted_replies.png"
   ]
