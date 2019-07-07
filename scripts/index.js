@@ -97,7 +97,7 @@
     floater.style.position = 'relative';
     floaterContainer.style.zIndex = '500000000';
 
-    var linksContainer = createLinksContainer();
+    var linkContainer = createLinkContainer();
 
     if (isLegacyTwitter()) {
       // User is on the regular web Twitter
@@ -113,70 +113,62 @@
 
     }
 
-    var links = createLinks();
+    var link = createLink();
 
-    linksContainer.appendChild(links);
-    floater.appendChild(linksContainer);
+    linkContainer.appendChild(link);
+    floater.appendChild(linkContainer);
     floater.appendChild(closeIcon);
     floaterContainer.appendChild(floater);
 
     return floaterContainer;
   }
 
-  function createLinksContainer() {
+  function createLinkContainer() {
 
-    var linksContainer = document.createElement('div');
+    var linkContainer = document.createElement('div');
 
-    linksContainer.className = 'quotedRepliesLinkDiv';
-    linksContainer.style.color = '#003fa7';
-    linksContainer.style.lineHeight = '10px';
-    linksContainer.textContent = 'Links:';
-    linksContainer.style.width = '40px';
-    linksContainer.style.height = '22px';
-    linksContainer.style.borderRadius = '15px';
-    linksContainer.style.padding = '8px';
-    linksContainer.style.textAlign = 'center';
-    linksContainer.style.background = 'white';
-    linksContainer.style.position = 'relative';
-    linksContainer.style.left = '25px';
-    linksContainer.style.fontFamily = 'sans-serif';
-    linksContainer.style.fontSize = 'xx-small';
+    linkContainer.className = 'quotedRepliesLinkDiv';
+    linkContainer.style.color = '#003fa7';
+    linkContainer.style.lineHeight = '10px';
+    linkContainer.style.width = '40px';
+    linkContainer.style.height = '16px';
+    linkContainer.style.borderRadius = '15px';
+    linkContainer.style.padding = '6px';
+    linkContainer.style.textAlign = 'center';
+    linkContainer.style.background = 'white';
+    linkContainer.style.position = 'relative';
+    linkContainer.style.left = '25px';
+    linkContainer.style.top = '2px';
+    linkContainer.style.fontFamily = 'sans-serif';
+    linkContainer.style.fontSize = 'xx-small';
 
-    return linksContainer;
+    return linkContainer;
   }
 
-  function createLinks() {
+  function createLink() {
 
     var url = window.location;
-    var searchLinkType1 = 'https://twitter.com/search?f=tweets&vertical=default&q=' + url.href;
-    var searchLinkType2 = 'https://twitter.com/search?f=tweets&vertical=default&q=' + url.hostname + url.pathname;
+    var searchLink = 'https://twitter.com/search?f=tweets&vertical=default&q=' + url.href;
     var link = document.createElement('a');
 
     link.target = '_blank';
     link.style.color = '#003fa7';
     link.style.fontFamily = 'sans-serif';
     link.style.display = 'inline-block';
-    link.style.textDecoration = 'underline';
+    link.style.textDecoration = 'none';
 
-    var linksDiv = document.createElement('div');
-    linksDiv.style.textAlign = 'left';
-    linksDiv.style.marginTop = '4px';
+    var linkDiv = document.createElement('div');
+    linkDiv.style.textAlign = 'center';
+    linkDiv.style.marginTop = '4px';
 
-    var link1 = link.cloneNode();
-    link1.href = searchLinkType1;
-    link1.style.width = '30%';
-    link1.style.marginLeft = '2px';
-    link1.style.marginRight = '20px';
-    link1.textContent = '1';
+    link.href = searchLink;
+    link.style.width = '100%';
+    link.style.margin = "0 auto";
+    link.textContent = 'Replies';
 
-    var link2 = link.cloneNode();
-    link2.href = searchLinkType2;
-    link2.textContent = '2';
+    linkDiv.appendChild(link);
 
-    linksDiv.appendChild(link1);
-    linksDiv.appendChild(link2);
-
-    return linksDiv;
+    return linkDiv;
   }
 
   function isLegacyTwitter() {
@@ -230,9 +222,9 @@
     closeIcon.style.borderRadius = '10px';
     closeIcon.style.cursor = 'pointer';
 
-    closeIcon.style.left = '70px';
+    closeIcon.style.left = '68px';
     closeIcon.style.position = 'relative';
-    closeIcon.style.top = '-49px';
+    closeIcon.style.top = '-35px';
 
 
     closeIcon.addEventListener('click', dismissFloatingElements);
