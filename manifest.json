@@ -12,7 +12,7 @@
   }],
   "description": "View the quoted replies for a Tweet.",
   "icons": {
-    "48": "icons/logo.png"
+    "48": "icons/opaque-logo.png"
   },
   "manifest_version": 2,
   "name": "Quoted Replies",
