@@ -245,15 +245,13 @@
       options = {};
     }
 
-    if (options.positionOptions) {
-      if (options.positionOptions.shouldSaveLastPosition) {
-
-        options.positionOptions.left = e.target.style.left;
-        options.positionOptions.top = e.target.style.top;
-      }
-
-    } else {
+    if (!options.positionOptions) {
       options.positionOptions = {};
+    }
+
+    if (options.positionOptions.shouldSaveLastPosition) {
+      options.positionOptions.left = e.target.style.left;
+      options.positionOptions.top = e.target.style.top;
     }
 
     if (!options.positionOptions.optionsPageOpened) {
@@ -267,8 +265,9 @@
 
     options.positionOptions.positionChanged = true;
 
-    chrome.storage.local.set({
-      ['positionOptions']: options.positionOptions
+    chrome.runtime.sendMessage({
+      message: 'saveNewFloaterPosition',
+      positions: options.positionOptions
     });
   }
 

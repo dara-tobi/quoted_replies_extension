@@ -29,4 +29,9 @@ chrome.runtime.onMessage.addListener(function(info){
   if (info.message === 'floaterPositionChanged') {
     chrome.runtime.openOptionsPage();
   }
+  if (info.message === 'saveNewFloaterPosition') {
+    chrome.storage.local.set({
+      ['positionOptions']: info.positions
+    });
+  }
 });
