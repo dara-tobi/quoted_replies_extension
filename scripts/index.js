@@ -147,8 +147,11 @@
 
   function createLink() {
 
-    var url = window.location;
-    var searchLink = 'https://twitter.com/search?f=tweets&vertical=default&q=' + url.href;
+    var url = window.location.href;
+    var links = url.split('/');
+    var queryUrl = links[links.length - 1];
+
+    var searchLink = 'https://twitter.com/search?f=live&vertical=default&q=url:' + queryUrl;
     var link = document.createElement('a');
 
     link.target = '_blank';
