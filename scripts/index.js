@@ -148,7 +148,8 @@
   function createLink() {
 
     var url = window.location.href;
-    var links = url.split('/');
+    var links = url.split('?')[0];
+    links = links.split('/');
     var queryUrl = links[links.length - 1];
 
     var searchLink = 'https://twitter.com/search?f=live&vertical=default&q=url:' + queryUrl;
