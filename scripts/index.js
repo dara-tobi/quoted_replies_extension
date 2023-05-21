@@ -1,286 +1,178 @@
-(function () {
+// check if quoted replies button has already been added to article; if not, add it
+let shouldAddQuotedRepliesButton = (article) => {
+  return !article.classList.contains('qtr-icon-added');
+};
 
-  chrome.runtime.onMessage.addListener(
+// get color of retweet button
+let getButtonColorFromExistingSVGs = (span) => {
+  if (!span) {
+    return '';
+  }
+  let retweetButtonComputedStyle = window.getComputedStyle(span);
+  return retweetButtonComputedStyle.getPropertyValue('color');
+};
 
-  function(request, sender, sendResponse) {
-    if (!isStatusPage()) {
-      removeQuotedRepliesFloater();
-    } else {
-      if (request.message === 'urlChanged' || request.message === 'pageLoaded') {
+// add quoted replies button to DOM
+let addQuotedRepliesToDom = (retweetButton, quotedRepliesButton) => {
+  retweetButton.parentNode.insertBefore(quotedRepliesButton, retweetButton.nextSibling);
+};
 
-        removeQuotedRepliesFloater();
-        appendQuotedRepliesFloater();
-
-      } else {
-        toggleQuotedRepliesFloater();
-      }
+// add hover title to quoted replies button
+let addQuotedRepliesButtonHoverTitle = (quotedRepliesButton) => {
+  quotedRepliesButton.addEventListener('mouseover', (event) => {
+    let hasAddedQuotedRepliesButtonHoverTitleToDOM = document.querySelector('#ext-quoted-replies-q-title');
+    if (hasAddedQuotedRepliesButtonHoverTitleToDOM) {
+      return;
     }
+    let titleParent = document.createElement('div');
+    titleParent.innerHTML = `
+      <div role="tooltip">
+        <span dir="ltr" data-testid="HoverLabel">
+          <span>See Quotes</span>
+        </span>
+      </div>
+    `;
+
+    // get position of quoted replies button
+    let quotedRepliesButtonPosition = quotedRepliesButton.getBoundingClientRect();
+
+    titleParent.style.top = `${quotedRepliesButtonPosition.top + 35}px`;
+    titleParent.style.left = `${quotedRepliesButtonPosition.left - 20}px`;
+    titleParent.id = 'ext-quoted-replies-q-title';
+    if (isTweetOpen(quotedRepliesButton.querySelector('a').href)) {
+      titleParent.style.top = `${quotedRepliesButtonPosition.top + 35 + 8}px`;
+      titleParent.style.left = `${quotedRepliesButtonPosition.left - 18}px`;
+    }
+    document.body.appendChild(titleParent);
   });
 
-  function isStatusPage() {
-
-    var urlParts = window.location.pathname.split('/');
-
-    if (urlParts[2] && urlParts[2] === 'status') {
-      return true;
+  // remove hover title when mouse leaves button
+  quotedRepliesButton.addEventListener('mouseout', () => {
+    let hasAddedQuotedRepliesButtonHoverTitleToDOM = document.querySelector('#ext-quoted-replies-q-title');
+    if (hasAddedQuotedRepliesButtonHoverTitleToDOM) {
+      hasAddedQuotedRepliesButtonHoverTitleToDOM.remove();
     }
+  });
+};
 
-    return false;
+// get url to use for searching for quote tweets
+let getQuoteTweetsSearchUrl = (article) => {
+  let statusUrl = article.querySelector('a[href*=status]').href;
+  let statusId = statusUrl.split('/').pop();
+  return `https://twitter.com/search?q=url%3A${statusId}&f=live`;
+};
+
+let isTweetOpen = (quoteTweetsSearchUrl) => {
+  return quoteTweetsSearchUrl.includes(location.href.split('/').pop());
+}
+
+// create quoted replies button
+let createQuotedRepliesButton = (buttonClasses, retweetButtonColor, svgClasses, quoteTweetsSearchUrl) => {
+  let quotedRepliesButton = document.createElement('div');
+  quotedRepliesButton.setAttribute('data-testid', 'quoted-replies-q');
+  quotedRepliesButton.setAttribute('aria-label', 'Retweet with comment');
+  quotedRepliesButton.setAttribute('role', 'button');
+  quotedRepliesButton.setAttribute('tabindex', '0');
+  quotedRepliesButton.setAttribute('data-focusable', 'true');
+  quotedRepliesButton.setAttribute('data-qa', 'quoted-replies-q');
+  quotedRepliesButton.setAttribute('data-focusable', 'true');
+  quotedRepliesButton.setAttribute('class', buttonClasses);
+  quotedRepliesButton.classList.add("ext-quoted-replies-q");
+  quotedRepliesButton.style.color = retweetButtonColor;
+  quotedRepliesButton.innerHTML = `
+    <a href="${quoteTweetsSearchUrl}" target="_blank" rel="noopener noreferrer" style="color: ${retweetButtonColor}">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <text font-size="21" x="50%" y="55%" text-anchor="middle" alignment-baseline="middle" font-weight="bold">Q</text>
+      </svg>
+    </a>
+  `;
+  quotedRepliesButton.querySelector('svg').setAttribute('class', svgClasses);
+
+  if (isTweetOpen(quoteTweetsSearchUrl)) {
+    quotedRepliesButton.classList.remove('ext-quoted-replies-q');
+    quotedRepliesButton.classList.add('ext-quoted-replies-q-active');
   }
 
-  function appendQuotedRepliesFloater() {
-    if (isStatusPage()) {
+  return quotedRepliesButton;
+};
 
-      var body = document.querySelector('body');
-      var floatingElements = createFloatingElements();
+let getColorsAndClassesFromRetweetOrReplyButton = (article, retweetButton, unRetweetButton) => {
+  let buttonColor;
+  let buttonClasses;
+  let svgClasses;
 
-      chrome.storage.local.get(['positionOptions'], function(options) {
-        var positionChanged = options.positionOptions &&
-          options.positionOptions.positionChanged;
+  if (retweetButton) {
+    let retweetSVG = retweetButton.querySelector('svg');
+    svgClasses = retweetSVG.getAttribute('class');
+    buttonClasses = retweetButton.getAttribute('class');
+    buttonColor = getButtonColorFromExistingSVGs(retweetSVG);
+  }
 
-        if (options.positionOptions) {
-          if (options.positionOptions.left && options.positionOptions.top) {
-            floatingElements.style.left = options.positionOptions.left;
-            floatingElements.style.top = options.positionOptions.top;
+  // unretweet button is green. We want to use a neutral color, so we'll use the comment button color
+  if (unRetweetButton) {
+    let replyButton = article.querySelector('[data-testid="reply"]')
+    let commentSVG = replyButton.querySelector('svg');
+    svgClasses = commentSVG.getAttribute('class');
+    buttonClasses = replyButton.getAttribute('class');
+    buttonColor = getButtonColorFromExistingSVGs(commentSVG);
+  }
+
+  return {buttonClasses, svgClasses, buttonColor};
+}
+
+// add extension features to tweet article
+let addExtensionFeaturesToTweetArticle = (node) => {
+  let article = node.querySelector('article');
+
+  if (article) {
+    if (shouldAddQuotedRepliesButton(article)) {
+      let retweetButton = article.querySelector('[data-testid="retweet"]');
+      let unRetweetButton = article.querySelector('[data-testid="unretweet"]');
+
+      if (!retweetButton && !unRetweetButton) {
+        return;
+      }
+
+      if (unRetweetButton) {
+        retweetButton = unRetweetButton;
+      }
+
+      let {buttonClasses, svgClasses, buttonColor} = getColorsAndClassesFromRetweetOrReplyButton(article, retweetButton, unRetweetButton);
+
+      if (retweetButton) {
+        let quoteTweetsSearchUrl = getQuoteTweetsSearchUrl(article);
+        let quotedRepliesButton = createQuotedRepliesButton(buttonClasses, buttonColor, svgClasses, quoteTweetsSearchUrl);
+        addQuotedRepliesToDom(retweetButton, quotedRepliesButton);
+        addQuotedRepliesButtonHoverTitle(quotedRepliesButton);
+
+        // add class to article so we know we've added the extension features to this tweet
+        article.classList.add('qtr-icon-added');
+      }
+    }
+  }
+};
+
+// initialize extension
+let initQuotedRepliesExtension = () => {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach((node) => {
+          if (!node.querySelector) {
+            return;
           }
-        }
-
-
-        if (!positionChanged) {
-          floatingElements.title = 'click and drag to reposition';
-        }
-
-        body.appendChild(floatingElements);
-
-      });
-    }
-  }
-
-  function removeQuotedRepliesFloater() {
-
-    var floaterContainer = document.querySelector('#floater-container');
-
-    if (floaterContainer) {
-      floaterContainer.parentNode.removeChild(floaterContainer);
-    }
-  }
-
-  function createFloatingElements() {
-
-    var iconUrl = chrome.extension.getURL("icons/quoted_replies.png");
-    var floater = document.createElement('div');
-    var floaterContainer = document.createElement('div');
-    var closeIcon = createCloseIcon();
-
-    floaterContainer.id = 'floater-container';
-
-    floaterContainer.style.position = 'fixed';
-    floaterContainer.style.width = '85px';
-    floaterContainer.style.height = '40px';
-    floaterContainer.draggable = 'true';
-    floaterContainer.style.cursor = 'move';
-
-    floaterContainer.addEventListener('dragenter', enableDrag);
-    floaterContainer.addEventListener('dragend', endDrag);
-
-
-    floater.id = 'quoted-replies-floater';
-
-    floater.style.height = '30px';
-    floater.style.width = '30px';
-
-    floater.style.borderRadius = '15px';
-
-    floater.style.backgroundImage = `url(${iconUrl})`;
-    floater.style.backgroundPosition = 'center';
-    floater.style.backgroundSize = 'contain';
-    floater.style.position = 'relative';
-    floaterContainer.style.zIndex = '500000000';
-
-    var linkContainer = createLinkContainer();
-
-    if (isLegacyTwitter()) {
-      // User is on the regular web Twitter
-
-      floaterContainer.style.top = '89px';
-      floaterContainer.style.left = '47%';
-
-    } else {
-      // User is on the new mobile-like version
-
-      floaterContainer.style.top = '88px';
-      floaterContainer.style.left = '39%';
-
-    }
-
-    var link = createLink();
-
-    linkContainer.appendChild(link);
-    floater.appendChild(linkContainer);
-    floater.appendChild(closeIcon);
-    floaterContainer.appendChild(floater);
-
-    return floaterContainer;
-  }
-
-  function createLinkContainer() {
-
-    var linkContainer = document.createElement('div');
-
-    linkContainer.className = 'quotedRepliesLinkDiv';
-    linkContainer.style.color = '#003fa7';
-    linkContainer.style.lineHeight = '10px';
-    linkContainer.style.width = '40px';
-    linkContainer.style.height = '16px';
-    linkContainer.style.borderRadius = '15px';
-    linkContainer.style.padding = '6px';
-    linkContainer.style.textAlign = 'center';
-    linkContainer.style.background = 'white';
-    linkContainer.style.position = 'relative';
-    linkContainer.style.left = '25px';
-    linkContainer.style.top = '2px';
-    linkContainer.style.fontFamily = 'sans-serif';
-    linkContainer.style.fontSize = 'xx-small';
-
-    return linkContainer;
-  }
-
-  function createLink() {
-
-    var url = window.location.href;
-    var links = url.split('?')[0];
-    links = links.split('/');
-    var queryUrl = links[links.length - 1];
-
-    var searchLink = 'https://twitter.com/search?f=live&vertical=default&q=url:' + queryUrl;
-    var link = document.createElement('a');
-
-    link.target = '_blank';
-    link.style.color = '#003fa7';
-    link.style.fontFamily = 'sans-serif';
-    link.style.display = 'inline-block';
-    link.style.textDecoration = 'none';
-
-    var linkDiv = document.createElement('div');
-    linkDiv.style.textAlign = 'center';
-    linkDiv.style.marginTop = '4px';
-
-    link.href = searchLink;
-    link.style.width = '100%';
-    link.style.margin = "0 auto";
-    link.textContent = 'Replies';
-
-    linkDiv.appendChild(link);
-
-    return linkDiv;
-  }
-
-  function isLegacyTwitter() {
-
-    return !!document.querySelector('.permalink-tweet');
-  }
-
-  var boxBeginY, boxBeginX, mouseBeginX, mouseBeginY;
-
-  function enableDrag(e) {
-
-    var pos = e.currentTarget.getBoundingClientRect();
-
-    boxBeginX = pos.x;
-    boxBeginY = pos.y;
-    mouseBeginX = e.clientX;
-    mouseBeginY = e.clientY;
-
-    e.currentTarget.style.display = 'none';
-  }
-
-  function endDrag(e) {
-
-    e.currentTarget.style.display = 'block';
-
-    e.currentTarget.style.left = e.clientX - (mouseBeginX - boxBeginX) + "px";
-    e.currentTarget.style.top = e.clientY - (mouseBeginY - boxBeginY) + "px";
-
-    e.currentTarget.title = '';
-
-    chrome.storage.local.get(['positionOptions'], updatePosition.bind(null, e));
-  }
-
-  function createCloseIcon() {
-
-    var closeIcon = document.createElement('span');
-
-    closeIcon.textContent = 'x';
-
-    closeIcon.style.background = '#700';
-    closeIcon.style.color = 'white';
-    closeIcon.style.height = '16px';
-    closeIcon.style.width = '16px';
-
-    closeIcon.style.display = 'inline-block';
-    closeIcon.style.fontFamily = 'sans-serif';
-    closeIcon.style.fontSize = 'xx-small';
-    closeIcon.style.lineHeight = '1.8em';
-    closeIcon.style.textAlign = 'center';
-
-    closeIcon.style.borderRadius = '10px';
-    closeIcon.style.cursor = 'pointer';
-
-    closeIcon.style.left = '68px';
-    closeIcon.style.position = 'relative';
-    closeIcon.style.top = '-35px';
-
-
-    closeIcon.addEventListener('click', dismissFloatingElements);
-
-    return closeIcon;
-  }
-
-  function dismissFloatingElements() {
-
-    var floaterContainer = document.querySelector('#floater-container');
-
-    floaterContainer.parentNode.removeChild(floaterContainer);
-  }
-
-  function updatePosition(e, options) {
-
-    if (!options) {
-      options = {};
-    }
-
-    if (!options.positionOptions) {
-      options.positionOptions = {};
-    }
-
-    if (options.positionOptions.shouldSaveLastPosition) {
-      options.positionOptions.left = e.target.style.left;
-      options.positionOptions.top = e.target.style.top;
-    }
-
-    if (!options.positionOptions.optionsPageOpened) {
-
-      chrome.runtime.sendMessage({
-        message: 'floaterPositionChanged'
-      });
-
-      options.positionOptions.optionsPageOpened = true;
-    }
-
-    options.positionOptions.positionChanged = true;
-
-    chrome.runtime.sendMessage({
-      message: 'saveNewFloaterPosition',
-      positions: options.positionOptions
+          addExtensionFeaturesToTweetArticle(node);
+        });
+      }
     });
-  }
+  });
 
-  function toggleQuotedRepliesFloater() {
-    if (document.querySelector('#floater-container')) {
-      removeQuotedRepliesFloater();
-    } else {
-      appendQuotedRepliesFloater();
-    }
-  }
+  // start observing changes to the body
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+};
 
-})();
+// run extension
+initQuotedRepliesExtension();

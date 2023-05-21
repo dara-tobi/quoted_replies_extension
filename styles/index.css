@@ -1,0 +1,55 @@
+div.ext-quoted-replies-q:hover, div.ext-quoted-replies-q-active:hover {
+    background-color: rgb(200, 0, 255, 0.15);
+    transition: background-color 0.2s ease;
+}
+
+div.ext-quoted-replies-q:hover a, div.ext-quoted-replies-q-active:hover a {
+    color: rgb(200, 0, 255) !important;
+    transition: color 0.2s ease;
+}
+
+div.ext-quoted-replies-q svg, div.ext-quoted-replies-q-active svg {
+    fill: currentcolor;
+    height: 1.25em;
+}
+div.ext-quoted-replies-q, div.ext-quoted-replies-q-active {
+    border-radius: 50%;
+}
+
+div.ext-quoted-replies-q  {
+    padding: 8px 8px;
+    margin-left: 9px;
+}
+
+div.ext-quoted-replies-q-active {
+    margin-left: 34px;
+    padding: 0px 12px;
+    font-size: 16px;
+}
+
+#ext-quoted-replies-q-title {
+    position: fixed;
+    font-size: 11px;
+    min-width: 80px;
+    margin-bottom: 1px;
+    margin-top: 1px;
+    background-color: rgba(91, 112, 131, 0.8);
+    align-items: center;
+    justify-content: center;
+    pointer-events: none !important;
+    min-height: 20px;
+    width: max-content;
+    border-radius: 2px;
+    display: inline-flex;
+}
+
+#ext-quoted-replies-q-title span {
+    line-height: 12px;
+    font-weight: 400;
+    color: rgb(255, 255, 255);
+    font-family: "TwitterChirp",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
