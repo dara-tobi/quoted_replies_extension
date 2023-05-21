@@ -63,7 +63,8 @@ let getQuoteTweetsSearchUrl = (article) => {
 };
 
 let isTweetOpen = (quoteTweetsSearchUrl) => {
-  return quoteTweetsSearchUrl.includes(location.href.split('/').pop());
+  return window.location.href.includes('status') &&
+    quoteTweetsSearchUrl.includes(location.href.split('/').pop());
 }
 
 // create quoted replies button
