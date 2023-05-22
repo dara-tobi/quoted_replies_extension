@@ -17,10 +17,6 @@ let addQuotedRepliesToDom = (retweetButton, quotedRepliesButton) => {
   retweetButton.parentNode.insertBefore(quotedRepliesButton, retweetButton.nextSibling);
 };
 
-let isTweetOpen = () => {
-  return location.href.match(/https:\/\/twitter\.com\/[^\/]+\/status\/\d+\/?/);
-}
-
 // add hover title to quoted replies button
 let addQuotedRepliesButtonHoverTitle = (quotedRepliesButton) => {
   quotedRepliesButton.addEventListener('mouseover', (event) => {
@@ -43,7 +39,7 @@ let addQuotedRepliesButtonHoverTitle = (quotedRepliesButton) => {
     titleParent.style.top = `${quotedRepliesButtonPosition.top + 35}px`;
     titleParent.style.left = `${quotedRepliesButtonPosition.left - 20}px`;
     titleParent.id = 'ext-quoted-replies-q-title';
-    if (isTweetOpen()) {
+    if (isTweetOpen(quotedRepliesButton.querySelector('a').href)) {
       titleParent.style.top = `${quotedRepliesButtonPosition.top + 35 + 8}px`;
       titleParent.style.left = `${quotedRepliesButtonPosition.left - 18}px`;
     }
@@ -61,21 +57,13 @@ let addQuotedRepliesButtonHoverTitle = (quotedRepliesButton) => {
 
 // get url to use for searching for quote tweets
 let getQuoteTweetsSearchUrl = (article) => {
-  let statusId;
-  let shouldGetStatusIdFromHref = isTweetOpen();
-
-  if (shouldGetStatusIdFromHref) {
-    statusId = location.href.split('/').pop();
-  }
-
-  if (!shouldGetStatusIdFromHref) {
-    let statusUrl = article.querySelector('a[href*=status]').href;
-    statusId = statusUrl.split('/').pop();
-  }
-
-  return `https://twitter.com/search?q=quoted_tweet_id%3A${statusId}&f=live`;
+  let statusId = article.querySelector('a[href*=status]').href?.split('/')?.pop();
+  return `https://twitter.com/search?q=url%3A${statusId}&f=live`;
 };
 
+let isTweetOpen = (quoteTweetsSearchUrl) => {
+  return quoteTweetsSearchUrl.includes(location.href.split('/').pop());
+}
 
 // create quoted replies button
 let createQuotedRepliesButton = (buttonClasses, retweetButtonColor, svgClasses, quoteTweetsSearchUrl) => {
@@ -99,7 +87,7 @@ let createQuotedRepliesButton = (buttonClasses, retweetButtonColor, svgClasses, 
   `;
   quotedRepliesButton.querySelector('svg').setAttribute('class', svgClasses);
 
-  if (isTweetOpen()) {
+  if (isTweetOpen(quoteTweetsSearchUrl)) {
     quotedRepliesButton.classList.remove('ext-quoted-replies-q');
     quotedRepliesButton.classList.add('ext-quoted-replies-q-active');
   }
