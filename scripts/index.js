@@ -57,8 +57,8 @@ let addQuotedRepliesButtonHoverTitle = (quotedRepliesButton) => {
 
 // get url to use for searching for quote tweets
 let getQuoteTweetsSearchUrl = (article) => {
-  let statusId = article.querySelector('a[href*=status]').href?.split('/')?.pop();
-  return `https://twitter.com/search?q=url%3A${statusId}&f=live`;
+  let statusId = article.querySelector('a[href*=status]').href.split('status')[1].split('/')[1];
+  return `https://twitter.com/search?q=quoted_tweet_id%3A${statusId}&f=live`;
 };
 
 let isTweetOpen = (quoteTweetsSearchUrl) => {
