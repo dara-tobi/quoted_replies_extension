@@ -55,9 +55,20 @@ let addQuotedRepliesButtonHoverTitle = (quotedRepliesButton) => {
   });
 };
 
+// get status id for tweet
+let getStatusId = (article) => {
+  let username = article.querySelector('[data-testid="User-Name"]').querySelector('a').href.split('/').pop();
+  let hrefs = Array.from(article.querySelectorAll('a[href*=status]')).map((el) => el.href);
+  let hrefsForUser = hrefs.filter((href) => href.includes(username));
+  let statusHref = hrefsForUser.find((href) => href.includes('/status/'));
+  let statusId = statusHref.split('/').pop();
+
+  return statusId;
+};
+
 // get url to use for searching for quote tweets
 let getQuoteTweetsSearchUrl = (article) => {
-  let statusId = article.querySelector('a[href*=status]').href.split('status')[1].split('/')[1];
+  let statusId = getStatusId(article);
   return `https://twitter.com/search?q=quoted_tweet_id%3A${statusId}&f=live`;
 };
 
