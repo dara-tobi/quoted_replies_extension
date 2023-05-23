@@ -40,8 +40,8 @@ let addQuotedRepliesButtonHoverTitle = (quotedRepliesButton) => {
     titleParent.style.left = `${quotedRepliesButtonPosition.left - 20}px`;
     titleParent.id = 'ext-quoted-replies-q-title';
     if (isTweetOpen(quotedRepliesButton.querySelector('a').href)) {
-      titleParent.style.top = `${quotedRepliesButtonPosition.top + 35 + 8}px`;
-      titleParent.style.left = `${quotedRepliesButtonPosition.left - 18}px`;
+      titleParent.style.top = `${quotedRepliesButtonPosition.top + 40}px`;
+      titleParent.style.left = `${quotedRepliesButtonPosition.left - 24}px`;
     }
     document.body.appendChild(titleParent);
   });

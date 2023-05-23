@@ -18,13 +18,22 @@ div.ext-quoted-replies-q, div.ext-quoted-replies-q-active {
 
 div.ext-quoted-replies-q  {
     padding: 8px 8px;
-    margin-left: 9px;
+    margin-left: 18px;
 }
 
-div.ext-quoted-replies-q-active {
+/* div.ext-quoted-replies-q-active {
     margin-left: 34px;
     padding: 0px 12px;
     font-size: 16px;
+} */
+
+div.ext-quoted-replies-q-active  {
+    margin-left: 35px;
+    margin-right: -40px;
+    height: 38px;
+    top: 4px;
+    padding: 5px;
+    font-size: 18px;
 }
 
 #ext-quoted-replies-q-title {
