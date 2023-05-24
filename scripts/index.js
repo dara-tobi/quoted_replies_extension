@@ -59,8 +59,8 @@ let addQuotedRepliesButtonHoverTitle = (quotedRepliesButton) => {
 let getStatusId = (article) => {
   let username = article.querySelector('[data-testid="User-Name"]').querySelector('a').href.split('/').pop();
   let hrefs = Array.from(article.querySelectorAll('a[href*=status]')).map((el) => el.href);
-  let statusHref = hrefs.filter((href) => href.match(`https:\/\/twitter.com\/${username}\/status\/[0-9]+$`)).pop();
-  let statusId = statusHref.split('/').pop();
+  let statusHref = hrefs?.filter((href) => href.match(`https:\/\/twitter.com\/${username}\/status\/[0-9]+$`))?.pop();
+  let statusId = statusHref?.split('/')?.pop();
 
   return statusId;
 };
