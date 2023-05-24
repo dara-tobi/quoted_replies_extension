@@ -55,12 +55,32 @@ let addQuotedRepliesButtonHoverTitle = (quotedRepliesButton) => {
   });
 };
 
+// get username from article
+let getUsername = (article) => {
+  return article.querySelector('[data-testid="User-Name"]').querySelector('a').href.split('/').pop();
+};
+
+// get all hrefs from article
+let getHrefs = (article) => {
+  return Array.from(article.querySelectorAll('a[href*=status]')).map((el) => el.href);
+};
+
+// filter out hrefs that aren't status hrefs
+let getStatusHref = (hrefs, username) => {
+  return hrefs?.filter((href) => href.match(`https:\/\/twitter.com\/${username}\/status\/[0-9]+`));
+};
+
+// get status id from href by using regex and capturing the status id
+let getStatusIdFromHref = (statusHref) => {
+  return statusHref[0].match(/https:\/\/twitter.com\/[a-zA-Z0-9_]+\/status\/([0-9]+)/)[1];
+};
+
 // get status id for tweet
 let getStatusId = (article) => {
-  let username = article.querySelector('[data-testid="User-Name"]').querySelector('a').href.split('/').pop();
-  let hrefs = Array.from(article.querySelectorAll('a[href*=status]')).map((el) => el.href);
-  let statusHref = hrefs?.filter((href) => href.match(`https:\/\/twitter.com\/${username}\/status\/[0-9]+$`))?.pop();
-  let statusId = statusHref?.split('/')?.pop();
+  let username = getUsername(article);
+  let hrefs = getHrefs(article);
+  let statusHref = getStatusHref(hrefs, username);
+  let statusId = getStatusIdFromHref(statusHref);
 
   return statusId;
 };
