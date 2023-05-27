@@ -14,7 +14,7 @@ let getButtonColorFromExistingSVGs = (span) => {
 
 // add quoted replies button to DOM
 let addQuotedRepliesToDom = (retweetButton, quotedRepliesButton) => {
-  retweetButton.parentNode.insertBefore(quotedRepliesButton, retweetButton.nextSibling);
+  retweetButton.parentNode.parentNode.insertBefore(quotedRepliesButton, retweetButton.parentNode.nextSibling);
 };
 
 // add hover title to quoted replies button
@@ -36,12 +36,12 @@ let addQuotedRepliesButtonHoverTitle = (quotedRepliesButton) => {
     // get position of quoted replies button
     let quotedRepliesButtonPosition = quotedRepliesButton.getBoundingClientRect();
 
-    titleParent.style.top = `${quotedRepliesButtonPosition.top + 35}px`;
-    titleParent.style.left = `${quotedRepliesButtonPosition.left - 20}px`;
+    titleParent.style.top = `${quotedRepliesButtonPosition.top + 28}px`;
+    titleParent.style.left = `${quotedRepliesButtonPosition.left - 32}px`;
     titleParent.id = 'ext-quoted-replies-q-title';
     if (isTweetOpen(quotedRepliesButton.querySelector('a').href)) {
-      titleParent.style.top = `${quotedRepliesButtonPosition.top + 40}px`;
-      titleParent.style.left = `${quotedRepliesButtonPosition.left - 24}px`;
+      titleParent.style.top = `${quotedRepliesButtonPosition.top + 43}px`;
+      titleParent.style.left = `${quotedRepliesButtonPosition.left - 30}px`;
     }
     document.body.appendChild(titleParent);
   });
@@ -65,22 +65,27 @@ let getHrefs = (article) => {
   return Array.from(article.querySelectorAll('a[href*=status]')).map((el) => el.href);
 };
 
-// filter out hrefs that aren't status hrefs
-let getStatusHref = (hrefs, username) => {
+// filter out hrefs that aren't status hrefs.
+// Status hrefs are hrefs that contain the username and status id.
+// Examples: https://twitter.com/username/status/123456789, https://twitter.com/username/status/123456789/analytics, https://twitter.com/username/status/123456789/likes
+let getStatusHrefs = (hrefs, username) => {
   return hrefs?.filter((href) => href.match(`https:\/\/twitter.com\/${username}\/status\/[0-9]+`));
 };
 
 // get status id from href by using regex and capturing the status id
-let getStatusIdFromHref = (statusHref) => {
-  return statusHref[0].match(/https:\/\/twitter.com\/[a-zA-Z0-9_]+\/status\/([0-9]+)/)[1];
+let getStatusIdFromHrefs = (statusHrefs) => {
+  return statusHrefs
+    .shift() // first status href
+    .match(/https:\/\/twitter.com\/[a-zA-Z0-9_]+\/status\/([0-9]+)/) // regex to get and capture status id
+    .pop(); // captured status id
 };
 
 // get status id for tweet
 let getStatusId = (article) => {
   let username = getUsername(article);
   let hrefs = getHrefs(article);
-  let statusHref = getStatusHref(hrefs, username);
-  let statusId = getStatusIdFromHref(statusHref);
+  let statusHrefs = getStatusHrefs(hrefs, username);
+  let statusId = getStatusIdFromHrefs(statusHrefs);
 
   return statusId;
 };
@@ -95,9 +100,31 @@ let isTweetOpen = (quoteTweetsSearchUrl) => {
   return quoteTweetsSearchUrl.includes(location.href.split('/').pop());
 }
 
+let resetAriaLabels = (quotedRepliesButton) => {
+  quotedRepliesButton.setAttribute('aria-label', 'See Quote Tweets');
+
+  let retweetWithCommentLabel = quotedRepliesButton.querySelector('[aria-label="Retweet"]');
+  if (retweetWithCommentLabel) {
+    retweetWithCommentLabel.removeAttribute('aria-label');
+  }
+
+  let ariaHasPopupMenu = quotedRepliesButton.querySelector('[aria-haspopup="menu"]');
+  if (ariaHasPopupMenu) {
+    ariaHasPopupMenu.removeAttribute('aria-haspopup');
+  }
+
+  let retweetTestId = quotedRepliesButton.querySelector('[data-testid="retweet"]');
+  if (retweetTestId) {
+    retweetTestId.removeAttribute('data-testid');
+  }
+};
+
 // create quoted replies button
-let createQuotedRepliesButton = (buttonClasses, retweetButtonColor, svgClasses, quoteTweetsSearchUrl) => {
-  let quotedRepliesButton = document.createElement('div');
+let createQuotedRepliesButton = (article, buttonClasses, retweetButtonColor, svgClasses, quoteTweetsSearchUrl) => {
+  let retweetButton = article.querySelector('[data-testid="retweet"]').parentElement;
+  // clone retweet button
+  let quotedRepliesButton = retweetButton.cloneNode(true);
+
   quotedRepliesButton.setAttribute('data-testid', 'quoted-replies-q');
   quotedRepliesButton.setAttribute('aria-label', 'Retweet with comment');
   quotedRepliesButton.setAttribute('role', 'button');
@@ -108,15 +135,24 @@ let createQuotedRepliesButton = (buttonClasses, retweetButtonColor, svgClasses, 
   quotedRepliesButton.setAttribute('class', buttonClasses);
   quotedRepliesButton.classList.add("ext-quoted-replies-q");
   quotedRepliesButton.style.color = retweetButtonColor;
-  quotedRepliesButton.innerHTML = `
-    <a href="${quoteTweetsSearchUrl}" target="_blank" rel="noopener noreferrer" style="color: ${retweetButtonColor}">
+  let formerSVG = quotedRepliesButton.querySelector('svg');
+  let svgParent = formerSVG.parentNode;
+  svgParent.removeChild(formerSVG);
+  let newSVGLink = document.createElement('div');
+  newSVGLink.innerHTML = `
+    <a class="ext-quoted-replies-link" href="${quoteTweetsSearchUrl}" target="_blank" rel="noopener noreferrer" style="display:block; color: ${retweetButtonColor}">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <text font-size="21" x="50%" y="55%" text-anchor="middle" alignment-baseline="middle" font-weight="bold">Q</text>
       </svg>
     </a>
   `;
-  quotedRepliesButton.querySelector('svg').setAttribute('class', svgClasses);
+  svgParent.appendChild(newSVGLink);
 
+  quotedRepliesButton.querySelector('svg').setAttribute('class', svgClasses);
+  let textTransitionContainer = quotedRepliesButton.querySelector('[data-testid="app-text-transition-container"]');
+  if (textTransitionContainer) {
+    textTransitionContainer.parentNode.remove();
+  }
   if (isTweetOpen(quoteTweetsSearchUrl)) {
     quotedRepliesButton.classList.remove('ext-quoted-replies-q');
     quotedRepliesButton.classList.add('ext-quoted-replies-q-active');
@@ -149,6 +185,12 @@ let getColorsAndClassesFromRetweetOrReplyButton = (article, retweetButton, unRet
   return {buttonClasses, svgClasses, buttonColor};
 }
 
+addClassToQuotedRepliesButtonBg = (quotedRepliesButton) => {
+  // find the div that has an empty innerHtml
+  let emptyDiv = Array.from(quotedRepliesButton.querySelectorAll('div')).find((div) => div.innerHTML === '');
+  emptyDiv.classList.add('ext-quoted-replies-q-svg-container-bg');
+}
+
 // add extension features to tweet article
 let addExtensionFeaturesToTweetArticle = (node) => {
   let article = node.querySelector('article');
@@ -170,7 +212,10 @@ let addExtensionFeaturesToTweetArticle = (node) => {
 
       if (retweetButton) {
         let quoteTweetsSearchUrl = getQuoteTweetsSearchUrl(article);
-        let quotedRepliesButton = createQuotedRepliesButton(buttonClasses, buttonColor, svgClasses, quoteTweetsSearchUrl);
+        let quotedRepliesButton = createQuotedRepliesButton(article, buttonClasses, buttonColor, svgClasses, quoteTweetsSearchUrl);
+
+        resetAriaLabels(quotedRepliesButton);
+        addClassToQuotedRepliesButtonBg(quotedRepliesButton);
         addQuotedRepliesToDom(retweetButton, quotedRepliesButton);
         addQuotedRepliesButtonHoverTitle(quotedRepliesButton);
 

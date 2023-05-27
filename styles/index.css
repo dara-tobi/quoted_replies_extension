@@ -1,5 +1,6 @@
-div.ext-quoted-replies-q:hover, div.ext-quoted-replies-q-active:hover {
-    background-color: rgb(200, 0, 255, 0.15);
+.ext-quoted-replies-q:hover .ext-quoted-replies-q-svg-container-bg,
+.ext-quoted-replies-q-active:hover .ext-quoted-replies-q-svg-container-bg  {
+    background-color: rgb(200, 0, 255, 0.15) !important;
     transition: background-color 0.2s ease;
 }
 
@@ -10,30 +11,10 @@ div.ext-quoted-replies-q:hover a, div.ext-quoted-replies-q-active:hover a {
 
 div.ext-quoted-replies-q svg, div.ext-quoted-replies-q-active svg {
     fill: currentcolor;
-    height: 1.25em;
 }
+
 div.ext-quoted-replies-q, div.ext-quoted-replies-q-active {
     border-radius: 50%;
-}
-
-div.ext-quoted-replies-q  {
-    padding: 8px 8px;
-    margin-left: 18px;
-}
-
-/* div.ext-quoted-replies-q-active {
-    margin-left: 34px;
-    padding: 0px 12px;
-    font-size: 16px;
-} */
-
-div.ext-quoted-replies-q-active  {
-    margin-left: 35px;
-    margin-right: -40px;
-    height: 38px;
-    top: 4px;
-    padding: 5px;
-    font-size: 18px;
 }
 
 #ext-quoted-replies-q-title {
