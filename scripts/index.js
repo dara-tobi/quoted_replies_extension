@@ -120,8 +120,7 @@ let resetAriaLabels = (quotedRepliesButton) => {
 };
 
 // create quoted replies button
-let createQuotedRepliesButton = (article, buttonClasses, retweetButtonColor, svgClasses, quoteTweetsSearchUrl) => {
-  let retweetButton = article.querySelector('[data-testid="retweet"]').parentElement;
+let createQuotedRepliesButton = (article, buttonClasses, retweetButtonColor, svgClasses, quoteTweetsSearchUrl, retweetButton) => {
   // clone retweet button
   let quotedRepliesButton = retweetButton.cloneNode(true);
 
@@ -212,7 +211,7 @@ let addExtensionFeaturesToTweetArticle = (node) => {
 
       if (retweetButton) {
         let quoteTweetsSearchUrl = getQuoteTweetsSearchUrl(article);
-        let quotedRepliesButton = createQuotedRepliesButton(article, buttonClasses, buttonColor, svgClasses, quoteTweetsSearchUrl);
+        let quotedRepliesButton = createQuotedRepliesButton(article, buttonClasses, buttonColor, svgClasses, quoteTweetsSearchUrl, retweetButton);
 
         resetAriaLabels(quotedRepliesButton);
         addClassToQuotedRepliesButtonBg(quotedRepliesButton);
