@@ -139,7 +139,7 @@ let createQuotedRepliesButton = (article, buttonClasses, retweetButtonColor, svg
   svgParent.removeChild(formerSVG);
   let newSVGLink = document.createElement('div');
   newSVGLink.innerHTML = `
-    <a class="ext-quoted-replies-link" href="${quoteTweetsSearchUrl}" target="_blank" rel="noopener noreferrer" style="display:block; color: ${retweetButtonColor}">
+    <a class="ext-quoted-replies-link" href="${quoteTweetsSearchUrl}" style="display:block; color: ${retweetButtonColor}">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <text font-size="21" x="50%" y="55%" text-anchor="middle" alignment-baseline="middle" font-weight="bold">Q</text>
       </svg>
