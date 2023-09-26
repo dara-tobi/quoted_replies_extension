@@ -4,7 +4,7 @@
     "css": [ "styles/index.css" ],
     "matches": [ "https://*.twitter.com/*" ]
   }],
-  "description": "The original, best way to see Quote Tweets on Twitter.",
+  "description": "See Quotes on Twitter in one click instead of Two.",
   "icons": {
     "48": "icons/opaque-logo.png"
   },
