@@ -168,7 +168,7 @@ let getColorsAndClassesFromRetweetOrReplyButton = (article, retweetButton, unRet
   if (retweetButton) {
     let retweetSVG = retweetButton.querySelector('svg');
     svgClasses = retweetSVG.getAttribute('class');
-    buttonClasses = retweetButton.getAttribute('class');
+    buttonClasses = retweetButton.parentNode.getAttribute('class');
     buttonColor = getButtonColorFromExistingSVGs(retweetSVG);
   }
 
@@ -177,7 +177,7 @@ let getColorsAndClassesFromRetweetOrReplyButton = (article, retweetButton, unRet
     let replyButton = article.querySelector('[data-testid="reply"]')
     let commentSVG = replyButton.querySelector('svg');
     svgClasses = commentSVG.getAttribute('class');
-    buttonClasses = replyButton.getAttribute('class');
+    buttonClasses = replyButton.parentNode.getAttribute('class');
     buttonColor = getButtonColorFromExistingSVGs(commentSVG);
   }
 
