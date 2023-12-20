@@ -1,45 +1,305 @@
 .ext-quoted-replies-q:hover .ext-quoted-replies-q-svg-container-bg,
-.ext-quoted-replies-q-active:hover .ext-quoted-replies-q-svg-container-bg  {
+.ext-quoted-replies-q-active:hover .ext-quoted-replies-q-svg-container-bg {
     background-color: rgb(200, 0, 255, 0.15) !important;
     transition: background-color 0.2s ease;
 }
 
-div.ext-quoted-replies-q:hover a, div.ext-quoted-replies-q-active:hover a {
+div.ext-quoted-replies-q:hover a,
+div.ext-quoted-replies-q-active:hover a {
     color: rgb(200, 0, 255) !important;
     transition: color 0.2s ease;
 }
 
-div.ext-quoted-replies-q svg, div.ext-quoted-replies-q-active svg {
+div.ext-quoted-replies-q svg,
+div.ext-quoted-replies-q-active svg {
     fill: currentcolor;
 }
 
-div.ext-quoted-replies-q, div.ext-quoted-replies-q-active {
+div.ext-quoted-replies-q,
+div.ext-quoted-replies-q-active {
     border-radius: 50%;
 }
 
 #ext-quoted-replies-q-title {
     position: fixed;
     font-size: 11px;
-    min-width: 80px;
-    margin-bottom: 1px;
-    margin-top: 1px;
+    /* min-width: 80px; */
+    /* margin-bottom: 1px; */
+    /* margin-top: 1px; */
     background-color: rgba(91, 112, 131, 0.8);
     align-items: center;
     justify-content: center;
     pointer-events: none !important;
     min-height: 20px;
-    width: max-content;
+    /* width: max-content; */
     border-radius: 2px;
-    display: inline-flex;
+    /* display: inline-flex; */
 }
 
 #ext-quoted-replies-q-title span {
-    line-height: 12px;
+    /* line-height: 12px; */
     font-weight: 400;
     color: rgb(255, 255, 255);
-    font-family: "TwitterChirp",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    padding-left: 4px;
-    padding-right: 4px;
-    padding-bottom: 2px;
-    padding-top: 2px;
+    font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    /* padding-left: 4px; */
+    /* padding-right: 4px; */
+    /* padding-bottom: 2px; */
+    /* padding-top: 2px; */
+}
+
+.ext-quoted-replies-control-panel {
+    font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 12px;
+}
+
+
+
+
+[type=checkbox]:checked~input[type=text]:empty {
+    outline: 1px solid red !important;
+}
+
+
+
+
+
+
+[type=checkbox]+input[type=text] {
+    outline: 1px solid red !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* new today */
+
+
+
+
+
+#quoted-replies-controls input[type=number],
+#quoted-replies-controls input[type=text] {
+    color: #555;
+    background-color: #eee;
+}
+
+/* checked checkbox with empty input child */
+#quoted-replies-controls input[type=checkbox]:checked~input[type=number]:empty,
+#quoted-replies-controls input[type=checkbox]:checked~input[type=text]:empty {
+    outline: 1px solid red;
+}
+
+/* Style for the custom checkbox container */
+#quoted-replies-controls input[type=checkbox] {
+    display: inline-block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+}
+
+/* Hide the default checkbox */
+#quoted-replies-controls input[type="checkbox"] {
+    visibility: hidden;
+    position: absolute;
+}
+
+#quoted-replies-controls p {
+    overflow: hidden;
+    border-radius: 3px;
+}
+
+#quoted-replies-controls p,
+#quoted-replies-controls label {
+    user-select: none;
+}
+
+/* Create a custom checkbox */
+#quoted-replies-controls .checkmark {
+    position: absolute;
+    top: 10px;
+    left: 7px;
+    height: 20px;
+    width: 20px;
+    background-color: #eee;
+    border-radius: 5px;
+}
+
+/* On mouse-over, add a grey background color */
+#quoted-replies-controls input~.checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+#quoted-replies-controls input:checked~.checkmark {
+    /* green */
+    background-color: mediumaquamarine;
+
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+#quoted-replies-controls .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+#quoted-replies-controls input:checked~.checkmark:after {
+    display: block;
+}
+
+
+
+/* Style the checkmark/indicator */
+#quoted-replies-controls .checkmark:after {
+    left: 7px;
+    top: 4px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+/* pannel button */
+#quoted-replies-controls .apply-filters-quoted-replies-panel-button {
+    /* background-color: #2196F3; */
+    background-color: mediumaquamarine;
+    /* darken background from mediumaquamarine to a darker form of it */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: .9em;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 3px;
+    width: 100%;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+/* hover */
+#quoted-replies-controls .apply-filters-quoted-replies-panel-button:hover {
+    background-color: rgba(102, 205, 170, 0.8);
+    transition: background-color 0.2s ease;
+}
+
+#quoted-replies-controls .quoted-replies-panel-button:hover {
+    background-color: #0b7dda;
+}
+
+#quoted-replies-controls {
+    margin-inline: 10px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: .9em;
+    color: #555;
+    background-color: #f9f9f9;
+}
+
+
+
+
+#quoted-replies-controls input[type=number] {
+    width: 50px;
+    outline: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: .8em;
+}
+
+#quoted-replies-controls input[type=text] {
+    outline: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: .8em;
+}
+
+.relative {
+    position: relative;
+}
+
+
+
+#quoted-replies-controls p:hover {
+    /* lighter */
+    background-color: #f1f1f1;
+}
+
+#quoted-replies-controls label {
+    display: inline-block;
+    width: 100%;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    white-space-collapse: preserve-breaks;
+
+    padding: 10px 0;
+    border-radius: 3px;
+    position: relative;
+    left: 40px;
+    display: inline-block;
+    width: 100%;
+    cursor: pointer;
+}
+
+
+#quoted-replies-controls p {
+    margin: 10px 0px;
+}
+
+#quoted-replies-controls h4 {
+    margin: 0;
+}
+
+
+#quoted-replies-controls [type="checkbox"]:checked~label input[type="text"]:placeholder-shown,
+#quoted-replies-controls [type="checkbox"]:checked~label input[type="number"]:placeholder-shown {
+    outline: 1px solid salmon !important;
+}
+
+
+#quoted-replies-controls label {
+    line-height: 1.5;
+}
+
+#quoted-replies-controls #likesCount, #quoted-replies-controls #retweetsCount {
+    margin-inline-start: 5px;
+}
+
+#quoted-replies-controls h4 {
+    margin-block: 15px;
+}
+
+h3.ext-quoted-replies-control-panel-header-title {
+    text-align: center;
+    margin-block: 16px;
+}
+
+#quoted-replies-controls p {
+    border-bottom: 1px solid transparent;
+}
+
+
+/* add disabled style for class="apply-filters-quoted-replies-panel-button"*/
+#quoted-replies-controls .apply-filters-quoted-replies-panel-button[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
 }

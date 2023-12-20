@@ -1,6 +1,6 @@
 {
   "content_scripts": [{
-    "js": [ "scripts/index.js" ],
+    "js": [  "scripts/utility.js" , "scripts/index.js", "scripts/controls.js"],
     "css": [ "styles/index.css" ],
     "matches": [ "https://*.twitter.com/*" ]
   }],
