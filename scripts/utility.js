@@ -1,4 +1,4 @@
-let debug = true;
+let debug = false;
 
 class TwitterSearchUrlUtility {
   constructor(url) {

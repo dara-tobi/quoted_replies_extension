@@ -23,28 +23,18 @@ div.ext-quoted-replies-q-active {
 #ext-quoted-replies-q-title {
     position: fixed;
     font-size: 11px;
-    /* min-width: 80px; */
-    /* margin-bottom: 1px; */
-    /* margin-top: 1px; */
     background-color: rgba(91, 112, 131, 0.8);
     align-items: center;
     justify-content: center;
     pointer-events: none !important;
     min-height: 20px;
-    /* width: max-content; */
     border-radius: 2px;
-    /* display: inline-flex; */
 }
 
 #ext-quoted-replies-q-title span {
-    /* line-height: 12px; */
     font-weight: 400;
     color: rgb(255, 255, 255);
     font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    /* padding-left: 4px; */
-    /* padding-right: 4px; */
-    /* padding-bottom: 2px; */
-    /* padding-top: 2px; */
 }
 
 .ext-quoted-replies-control-panel {
@@ -55,35 +45,14 @@ div.ext-quoted-replies-q-active {
 
 
 
-[type=checkbox]:checked~input[type=text]:empty {
+#quoted-replies-controls [type=checkbox]:checked~input[type=text]:empty {
     outline: 1px solid red !important;
 }
 
 
-
-
-
-
-[type=checkbox]+input[type=text] {
+#quoted-replies-controls [type=checkbox]+input[type=text] {
     outline: 1px solid red !important;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-/* new today */
-
-
-
-
 
 #quoted-replies-controls input[type=number],
 #quoted-replies-controls input[type=text] {
@@ -218,7 +187,7 @@ div.ext-quoted-replies-q-active {
 
 
 #quoted-replies-controls input[type=number] {
-    width: 50px;
+    width: 30px;
     outline: none;
     border: 1px solid #ccc;
     border-radius: 3px;
@@ -262,7 +231,7 @@ div.ext-quoted-replies-q-active {
 
 
 #quoted-replies-controls p {
-    margin: 10px 0px;
+    margin: 5px 0px;
 }
 
 #quoted-replies-controls h4 {
@@ -293,13 +262,26 @@ h3.ext-quoted-replies-control-panel-header-title {
     margin-block: 16px;
 }
 
-#quoted-replies-controls p {
-    border-bottom: 1px solid transparent;
-}
-
-
 /* add disabled style for class="apply-filters-quoted-replies-panel-button"*/
 #quoted-replies-controls .apply-filters-quoted-replies-panel-button[disabled] {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+/* number input */
+#quoted-replies-controls input[type=number]::-webkit-inner-spin-button,
+#quoted-replies-controls input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+#quoted-replies-controls input[type=number] {
+    text-align: center;
+}
+
+#quoted-replies-controls input[type=text] {
+    padding: 5px;
+}
+
+#quoted-replies-controls * {
+    transition: all 0.2s ease;
 }
